@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stalki - Browser Time Tracker</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Today's Time</h1>
+    <div class="chart-row">
+      <canvas id="pieChart" width="180" height="180"></canvas>
+      <div class="legend" id="pieLegend"></div>
+    </div>
+    <h1>Weekly Overview</h1>
+    <div class="weekly-row">
+      <div class="summary-box">
+        <div class="summary-title">Weekly</div>
+        <div class="summary-value" id="weeklyTotal">0h 0m</div>
+        <div class="summary-title">Monthly</div>
+        <div class="summary-value" id="monthlyTotal">0h 0m</div>
+      </div>
+      <canvas id="barChart" width="260" height="120"></canvas>
+    </div>
+  </div>
+  <script src="chart.min.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

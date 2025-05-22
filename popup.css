@@ -1,0 +1,107 @@
+body {
+  background: #181818;
+  color: #fff;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  min-width: 380px;
+}
+
+.container {
+  padding: 20px 18px 18px 18px;
+}
+
+h1 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 18px 0 10px 0;
+  letter-spacing: 0.5px;
+}
+
+.chart-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+#pieChart {
+  background: #222;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px #0002;
+}
+
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 0.98rem;
+  gap: 8px;
+}
+
+.legend-color {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  margin-right: 4px;
+  display: inline-block;
+}
+
+.legend-label {
+  min-width: 90px;
+  font-weight: 500;
+}
+
+.legend-time {
+  color: #aaa;
+  font-size: 0.95em;
+  margin-left: 6px;
+}
+
+.legend-percent {
+  color: #fbbf24;
+  font-size: 0.95em;
+  margin-left: 6px;
+}
+
+.weekly-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+}
+
+.summary-box {
+  background: #222;
+  border-radius: 12px;
+  padding: 12px 18px;
+  min-width: 90px;
+  text-align: center;
+  margin-bottom: 8px;
+  box-shadow: 0 2px 8px #0002;
+}
+
+.summary-title {
+  color: #aaa;
+  font-size: 0.93em;
+  margin-bottom: 2px;
+}
+
+.summary-value {
+  font-size: 1.1em;
+  font-weight: 600;
+  margin-bottom: 7px;
+  color: #fff;
+}
+
+#barChart {
+  background: #222;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px #0002;
+  margin-bottom: 8px;
+}
