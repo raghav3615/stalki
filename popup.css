@@ -5,10 +5,14 @@ body {
   margin: 0;
   padding: 0;
   min-width: 380px;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 .container {
   padding: 20px 18px 18px 18px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -23,12 +27,15 @@ h1 {
   align-items: flex-start;
   gap: 18px;
   margin-bottom: 18px;
+  flex-wrap: wrap;
 }
 
 #pieChart {
   background: #222;
   border-radius: 50%;
   box-shadow: 0 2px 8px #0002;
+  max-width: 100%;
+  height: auto;
 }
 
 .legend {
@@ -36,6 +43,8 @@ h1 {
   flex-direction: column;
   gap: 7px;
   margin-top: 8px;
+  flex: 1;
+  min-width: 200px;
 }
 
 .legend-item {
@@ -74,6 +83,8 @@ h1 {
   display: flex;
   align-items: flex-end;
   gap: 18px;
+  flex-wrap: wrap;
+  width: 100%;
 }
 
 .summary-box {
@@ -104,4 +115,7 @@ h1 {
   border-radius: 12px;
   box-shadow: 0 2px 8px #0002;
   margin-bottom: 8px;
+  max-width: 100%;
+  height: auto;
+  width: 100%;
 }
