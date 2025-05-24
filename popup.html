@@ -12,15 +12,27 @@
       <canvas id="pieChart" width="180" height="180"></canvas>
       <div class="legend" id="pieLegend"></div>
     </div>
+    
     <h1>Weekly Overview</h1>
-    <div class="weekly-row">
-      <div class="summary-box">
-        <div class="summary-title">Weekly</div>
-        <div class="summary-value" id="weeklyTotal">0h 0m</div>
-        <div class="summary-title">Monthly</div>
-        <div class="summary-value" id="monthlyTotal">0h 0m</div>
+    <div class="tracker-info">
+      <!-- <div class="tracker-title">Browser Time Tracker</div> -->
+      <div class="tracker-description">Showing total browser time for the last week and overall month</div>
+    </div>
+    
+    <div class="stats-container">
+      <div class="stats-box">
+        <div class="stats-label">Weekly</div>
+        <div class="stats-value" id="weeklyTotal">30h 53m</div>
+        <div class="stats-value-secondary" id="weeklyTotalMinutes">32m</div>
       </div>
-      <canvas id="barChart" width="260" height="120"></canvas>
+      <div class="stats-box">
+        <div class="stats-label">Monthly</div>
+        <div class="stats-value" id="monthlyTotal">146h</div>
+      </div>
+    </div>
+    
+    <div class="weekly-chart">
+      <canvas id="barChart" width="380" height="120"></canvas>
     </div>
   </div>
   <script src="chart.min.js"></script>

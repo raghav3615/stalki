@@ -16,6 +16,14 @@ function msToTime(ms) {
   return `${h}h ${m}m`;
 }
 
+function msToHours(ms) {
+  return Math.floor(ms / 3600000);
+}
+
+function msToMinutes(ms) {
+  return Math.floor((ms % 3600000) / 60000);
+}
+
 function getPercent(ms, total) {
   if (!total) return "0%";
   return Math.round((ms / total) * 100) + "%";
@@ -138,29 +146,36 @@ async function renderBarChart() {
       datasets: [{
         data: weekly.map(ms => ms / 3600000), // hours
         backgroundColor: "#3b82f6",
-        borderRadius: 7,
+        borderRadius: 4,
         barPercentage: 0.7,
         categoryPercentage: 0.7
       }]
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
         x: {
           grid: { display: false },
-          ticks: { color: "#aaa", font: { size: 13 } }
+          ticks: { color: "#aaa", font: { size: 12 } }
         },
         y: {
           grid: { color: "#222" },
-          ticks: { color: "#aaa", font: { size: 13 }, stepSize: 2 }
+          display: false
         }
       }
     }
   });
 
-  // Summary box
-  document.getElementById('weeklyTotal').textContent = msToTime(total);
-  document.getElementById('monthlyTotal').textContent = msToTime(monthly);
+  // Summary box - with the new format
+  const weeklyHours = msToHours(total);
+  const weeklyMinutes = msToMinutes(total);
+  const monthlyHours = msToHours(monthly);
+  
+  document.getElementById('weeklyTotal').textContent = `${weeklyHours}h`;
+  document.getElementById('weeklyTotalMinutes').textContent = `${weeklyMinutes}m`;
+  document.getElementById('monthlyTotal').textContent = `${monthlyHours}h`;
 }
 
 // --- Main render ---
