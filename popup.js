@@ -168,11 +168,13 @@ async function renderBarChart() {
     }
   });
 
-  // Summary box - with the new format
-  const weeklyHours = msToHours(total);
-  const weeklyMinutes = msToMinutes(total);
-  const monthlyHours = msToHours(monthly);
+  // Summary box with precise time formatting
+  // Calculate hours and minutes precisely
+  const weeklyHours = Math.floor(total / 3600000);
+  const weeklyMinutes = Math.floor((total % 3600000) / 60000);
+  const monthlyHours = Math.floor(monthly / 3600000);
   
+  // Update DOM with precise values
   document.getElementById('weeklyTotal').textContent = `${weeklyHours}h`;
   document.getElementById('weeklyTotalMinutes').textContent = `${weeklyMinutes}m`;
   document.getElementById('monthlyTotal').textContent = `${monthlyHours}h`;
