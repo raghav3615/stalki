@@ -164,7 +164,8 @@ ext.runtime.onMessage.addListener((msg, sender, sendResponse) => {
       const ongoingTime = Date.now() - lastActivated;
       sendResponse({
         domain: activeDomain,
-        ms: ongoingTime >= MIN_TRACKING_TIME ? ongoingTime : 0
+  // Return exact ongoing time for precise UI display; saving still honors threshold elsewhere
+  ms: ongoingTime
       });
     } else {
       sendResponse({});

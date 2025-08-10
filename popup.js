@@ -44,6 +44,28 @@ function formatTime(ms) {
   }
 }
 
+function formatClock(ms) {
+  const hours = Math.floor(ms / 3600000);
+  const minutes = Math.floor((ms % 3600000) / 60000);
+  const seconds = Math.floor((ms % 60000) / 1000);
+  const hh = String(hours).padStart(2, '0');
+  const mm = String(minutes).padStart(2, '0');
+  const ss = String(seconds).padStart(2, '0');
+  return `${hh}:${mm}:${ss}`;
+}
+
+function getWeekdayLabels(startingMonday = true) {
+  // Generate localized weekday short labels starting from Monday (or Sunday)
+  const base = startingMonday ? 1 : 0; // 1=Mon, 0=Sun
+  const fmt = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+  const labels = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(Date.UTC(2020, 5, base + i)); // stable week
+    labels.push(fmt.format(d));
+  }
+  return labels;
+}
+
 // --- Enhanced data fetching with better accuracy ---
 async function getTodayData() {
   const todayKey = new Date().toISOString().slice(0, 10);
@@ -143,8 +165,8 @@ async function renderPieChart() {
   const times = Object.values(data);
   const total = times.reduce((a, b) => a + b, 0);
 
-  // Update total time display
-  document.getElementById('totalToday').textContent = formatTime(total);
+  // Update total time display as HH:MM:SS for precision
+  document.getElementById('totalToday').textContent = formatClock(total);
 
   // Destroy previous chart instance if exists
   if (pieChartInstance) {
@@ -171,10 +193,10 @@ async function renderPieChart() {
       plugins: {
         legend: { display: false },
         tooltip: {
-          backgroundColor: 'rgba(37, 37, 66, 0.95)',
-          titleColor: '#ffffff',
-          bodyColor: '#a1a1aa',
-          borderColor: '#374151',
+          backgroundColor: 'rgba(13, 18, 26, 0.98)',
+          titleColor: '#e7eaf0',
+          bodyColor: '#a6adbb',
+          borderColor: '#263142',
           borderWidth: 1,
           cornerRadius: 8,
           callbacks: {
@@ -231,9 +253,9 @@ async function renderBarChart() {
   }
 
   const chartData = currentPeriod === 'week' ? weekly : monthlyData.dailyData.slice(-7);
-  const labels = currentPeriod === 'week' 
-    ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
-    : ['Day -6', 'Day -5', 'Day -4', 'Day -3', 'Day -2', 'Yesterday', 'Today'];
+  const labels = currentPeriod === 'week'
+    ? getWeekdayLabels(true)
+    : ['-6d', '-5d', '-4d', '-3d', '-2d', 'Yesterday', 'Today'];
 
   const barCtx = document.getElementById('barChart').getContext('2d');
   barChartInstance = new Chart(barCtx, {
@@ -272,18 +294,18 @@ async function renderBarChart() {
         x: {
           grid: { display: false },
           ticks: { 
-            color: "#a1a1aa", 
+            color: "#a6adbb", 
             font: { size: 11, family: 'inherit' }
           },
           border: { display: false }
         },
         y: {
           grid: { 
-            color: "#374151",
+            color: "#263142",
             lineWidth: 1
           },
           ticks: { 
-            color: "#a1a1aa",
+            color: "#a6adbb",
             font: { size: 10, family: 'inherit' },
             callback: function(value) {
               return value + 'h';
