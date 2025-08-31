@@ -217,6 +217,13 @@ class ScreenTimeTracker {
         console.error('Error saving activity to database:', error);
       }
       
+      // Save app usage data every 10 seconds to ensure consistency
+      try {
+        await this.saveAllAppUsage();
+      } catch (error) {
+        console.error('Error saving app usage during tracking:', error);
+      }
+      
       // Check break reminder
       if (this.breakReminderEnabled) {
         try {
@@ -247,6 +254,7 @@ class ScreenTimeTracker {
             
             const lines = stdout.split('\n');
             let bestApp = 'explorer';
+            let foundApps = [];
             
             // Priority order for common apps - these are the ones we really want to track
             // Order matters - put the most important ones first
@@ -254,7 +262,39 @@ class ScreenTimeTracker {
               'discord', 'code', 'cursor', 'brave', 'chrome', 'firefox', 'edge', 'msedge',
               'notepad', 'wordpad', 'winword', 'excel', 'powerpnt', 'outlook',
               'teams', 'slack', 'spotify', 'steam', 'whatsapp', 'telegram', 'skype',
-              'photoshop', 'illustrator', 'blender', 'unity'
+              'photoshop', 'illustrator', 'blender', 'unity', 'obs', 'zoom', 'webex',
+              'notion', 'figma', 'canva', 'trello', 'asana', 'jira', 'confluence',
+              'vscode', 'intellij', 'eclipse', 'android studio', 'xcode', 'terminal',
+              'powershell', 'cmd', 'git', 'github', 'gitlab', 'bitbucket'
+            ];
+            
+            // Enhanced unwanted processes list
+            const unwantedProcesses = [
+              'crash', 'handler', 'service', 'agent', 'webview', 'msedgewebview', 
+              'background', 'runtime', 'helper', 'updater', 'installer', 'uninstaller',
+              'bravecrash', 'crashhandler', 'crashreporter', 'crashpad', 'crashpad_handler',
+              'crashreporter', 'crashpad_handler', 'crashpad_handler.exe', 'crashpad.exe',
+              'crashreporter.exe', 'crashpad_handler.exe', 'crashpad.exe', 'crashreporter.exe',
+              'msedgewebview2', 'webview2', 'webview', 'webview2.exe', 'webview.exe',
+              'backgroundtaskhost', 'backgroundtaskhost.exe', 'backgroundtaskhost.exe',
+              'runtimebroker', 'runtimebroker.exe', 'runtimebroker.exe',
+              'taskhostw', 'taskhostw.exe', 'taskhostw.exe',
+              'sihost', 'sihost.exe', 'sihost.exe',
+              'nvcontainer', 'nvcontainer.exe', 'nvcontainer.exe',
+              'fontdrvhost', 'fontdrvhost.exe', 'fontdrvhost.exe',
+              'conhost', 'conhost.exe', 'conhost.exe',
+              'dwm', 'dwm.exe', 'dwm.exe',
+              'lsaiso', 'lsaiso.exe', 'lsaiso.exe',
+              'lsass', 'lsass.exe', 'lsass.exe',
+              'svchost', 'svchost.exe', 'svchost.exe',
+              'wininit', 'wininit.exe', 'wininit.exe',
+              'services', 'services.exe', 'services.exe',
+              'csrss', 'csrss.exe', 'csrss.exe',
+              'smss', 'smss.exe', 'smss.exe',
+              'registry', 'registry.exe', 'registry.exe',
+              'system', 'system.exe', 'system.exe',
+              'secure system', 'secure system.exe', 'secure system.exe',
+              'system idle process', 'system idle process.exe', 'system idle process.exe'
             ];
             
             // First pass: look for priority apps (case-insensitive), but skip unwanted processes
@@ -265,28 +305,37 @@ class ScreenTimeTracker {
                   const processName = parts[0].replace(/"/g, '').replace('.exe', '').toLowerCase();
                   
                   // Skip unwanted processes
-                  if (processName.includes('crash') || processName.includes('handler') || 
-                      processName.includes('service') || processName.includes('agent') ||
-                      processName.includes('crashhandler') || processName.includes('bravecrash') ||
-                      processName.includes('webview') || processName.includes('msedgewebview') ||
-                      processName.includes('background') || processName.includes('runtime')) {
+                  if (unwantedProcesses.some(unwanted => processName.includes(unwanted.toLowerCase()))) {
                     continue;
                   }
                   
                   for (const priorityApp of priorityApps) {
                     if (processName.includes(priorityApp.toLowerCase())) {
-                      bestApp = parts[0].replace(/"/g, '').replace('.exe', '');
-                      console.log(`🎯 Found priority app: ${bestApp}`);
-                      resolve(bestApp);
-                      return;
+                      foundApps.push(parts[0].replace(/"/g, '').replace('.exe', ''));
+                      if (foundApps.length === 1) { // First priority app found
+                        bestApp = parts[0].replace(/"/g, '').replace('.exe', '');
+                        console.log(`🎯 Found priority app: ${bestApp}`);
+                      }
                     }
                   }
                 }
               }
             }
             
+            // If we found multiple priority apps, log them all
+            if (foundApps.length > 1) {
+              console.log(`📱 Found ${foundApps.length} priority apps: ${foundApps.join(', ')}`);
+            }
+            
             // Second pass: look for any visible process that's not a system process
-            const systemProcesses = ['system idle process', 'system', 'secure system', 'registry', 'smss', 'csrss', 'wininit', 'services', 'lsaiso', 'lsass', 'svchost', 'conhost', 'fontdrvhost', 'dwm', 'nvcontainer', 'sihost', 'taskhostw', 'runtimebroker', 'backgroundtaskhost', 'crash', 'handler', 'service', 'agent', 'webview', 'msedgewebview', 'background', 'runtime'];
+            const systemProcesses = [
+              'system idle process', 'system', 'secure system', 'registry', 'smss', 'csrss', 
+              'wininit', 'services', 'lsaiso', 'lsass', 'svchost', 'conhost', 'fontdrvhost', 
+              'dwm', 'nvcontainer', 'sihost', 'taskhostw', 'runtimebroker', 'backgroundtaskhost', 
+              'crash', 'handler', 'service', 'agent', 'webview', 'msedgewebview', 'background', 
+              'runtime', 'helper', 'updater', 'installer', 'uninstaller', 'msiexec', 'wuauserv',
+              'spoolsv', 'alg', 'wscsvc', 'winlogon', 'csrss', 'wininit', 'services', 'lsm'
+            ];
             
             for (const line of lines) {
               if (line.trim()) {
@@ -300,13 +349,18 @@ class ScreenTimeTracker {
                   }
                   
                   // If it's not a system process, it might be a user app
-                  if (processName && processName.length > 0) {
-                    bestApp = parts[0].replace(/"/g, '').replace('.exe', '');
-                    console.log(`📱 Found user process: ${bestApp}`);
-                    break;
+                  if (processName && processName.length > 0 && processName.length < 50) {
+                    if (!foundApps.includes(parts[0].replace(/"/g, '').replace('.exe', ''))) {
+                      foundApps.push(parts[0].replace(/"/g, '').replace('.exe', ''));
+                    }
                   }
                 }
               }
+            }
+            
+            // Log all found apps for debugging
+            if (foundApps.length > 0) {
+              console.log(`📱 Total apps found: ${foundApps.length} - ${foundApps.join(', ')}`);
             }
             
             resolve(bestApp);
@@ -436,11 +490,12 @@ class ScreenTimeTracker {
   async getTodayStats() {
     try {
       const today = moment().format('YYYY-MM-DD');
+      
+      // Get screen time from activities table
       const screenTime = await this.getTodayScreenTime();
-      const appUsage = await this.databaseManager.getAppUsageData(
-        moment().startOf('day').toDate(),
-        moment().endOf('day').toDate()
-      );
+      
+      // Get app usage from app_usage table for today
+      const appUsage = await this.databaseManager.getDailyAppUsage(today);
       
       return {
         date: today,

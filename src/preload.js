@@ -80,5 +80,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
         }
       });
     }
-  }
+  },
+
+  getDailyAppUsageWithCategories: (date) => ipcRenderer.invoke('get-daily-app-usage-with-categories', date),
+  getConsolidatedDailyData: (date) => ipcRenderer.invoke('get-consolidated-daily-data', date),
 });

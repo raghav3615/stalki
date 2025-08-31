@@ -253,6 +253,108 @@ class DatabaseManager {
     });
   }
 
+  async getDailyAppUsageWithCategories(date) {
+    return new Promise((resolve, reject) => {
+      this.db.all(`
+        SELECT 
+          appName,
+          SUM(duration) as totalTime,
+          COUNT(*) as usageCount,
+          CASE 
+            WHEN appName IN ('chrome', 'firefox', 'edge', 'safari', 'explorer', 'brave') THEN 'Web Browsing'
+            WHEN appName IN ('word', 'excel', 'powerpoint', 'outlook', 'teams', 'slack', 'code', 'cursor', 'vscode') THEN 'Productivity'
+            WHEN appName IN ('spotify', 'music', 'youtube', 'netflix', 'steam', 'discord') THEN 'Entertainment'
+            WHEN appName IN ('discord', 'skype', 'whatsapp', 'telegram', 'teams', 'slack') THEN 'Social Networking'
+            WHEN appName IN ('photoshop', 'illustrator', 'blender', 'unity') THEN 'Creative'
+            ELSE 'Other'
+          END as category
+        FROM app_usage 
+        WHERE date = ?
+        GROUP BY appName
+        ORDER BY totalTime DESC
+      `, [date], (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows || []);
+        }
+      });
+    });
+  }
+
+  async getConsolidatedDailyData(date) {
+    return new Promise((resolve, reject) => {
+      // Get both activities and app usage for the same date
+      this.db.all(`
+        SELECT 
+          'activity' as source,
+          timestamp,
+          date,
+          appName,
+          duration,
+          isActive
+        FROM activities 
+        WHERE date = ?
+        UNION ALL
+        SELECT 
+          'app_usage' as source,
+          timestamp,
+          date,
+          appName,
+          duration,
+          1 as isActive
+        FROM app_usage 
+        WHERE date = ?
+        ORDER BY timestamp ASC
+      `, [date, date], (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          // Process and consolidate the data
+          const consolidated = {
+            date: date,
+            totalScreenTime: 0,
+            totalAppUsage: 0,
+            activities: [],
+            appUsage: [],
+            apps: new Map()
+          };
+          
+          if (rows && rows.length > 0) {
+            rows.forEach(row => {
+              if (row.source === 'activity') {
+                consolidated.activities.push(row);
+                if (row.isActive) {
+                  consolidated.totalScreenTime += row.duration;
+                }
+              } else if (row.source === 'app_usage') {
+                consolidated.appUsage.push(row);
+                consolidated.totalAppUsage += row.duration;
+                
+                // Aggregate app usage
+                if (!consolidated.apps.has(row.appName)) {
+                  consolidated.apps.set(row.appName, {
+                    appName: row.appName,
+                    totalTime: 0,
+                    usageCount: 0
+                  });
+                }
+                const app = consolidated.apps.get(row.appName);
+                app.totalTime += row.duration;
+                app.usageCount += 1;
+              }
+            });
+          }
+          
+          // Convert apps Map to array
+          consolidated.apps = Array.from(consolidated.apps.values());
+          
+          resolve(consolidated);
+        }
+      });
+    });
+  }
+
   async getWeeklyChartData() {
     return new Promise((resolve, reject) => {
       const endDate = new Date();

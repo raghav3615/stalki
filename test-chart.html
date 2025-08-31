@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chart.js Test</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .chart-container { width: 600px; height: 400px; border: 2px solid #ccc; margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>Chart.js Test</h1>
+    <p>This is a simple test to verify Chart.js is working.</p>
+    
+    <div class="chart-container">
+        <canvas id="testChart"></canvas>
+    </div>
+    
+    <button onclick="updateChart()">Update Chart</button>
+    
+    <script>
+        console.log('Chart.js version:', Chart.version);
+        
+        const ctx = document.getElementById('testChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+                datasets: [{
+                    label: 'Test Data',
+                    data: [10, 20, 30, 40, 50, 60, 70],
+                    backgroundColor: '#007aff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+        
+        function updateChart() {
+            chart.data.datasets[0].data = [Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100, Math.random() * 100];
+            chart.update();
+            console.log('Chart updated!');
+        }
+        
+        console.log('Chart created:', chart);
+    </script>
+</body>
+</html>

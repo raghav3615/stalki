@@ -196,6 +196,30 @@ ipcMain.handle('get-weekly-chart-data', async () => {
   }
 });
 
+ipcMain.handle('get-daily-app-usage-with-categories', async (event, date) => {
+  try {
+    if (databaseManager) {
+      return await databaseManager.getDailyAppUsageWithCategories(date);
+    }
+    return [];
+  } catch (error) {
+    console.error('Error getting daily app usage with categories:', error);
+    return [];
+  }
+});
+
+ipcMain.handle('get-consolidated-daily-data', async (event, date) => {
+  try {
+    if (databaseManager) {
+      return await databaseManager.getConsolidatedDailyData(date);
+    }
+    return null;
+  } catch (error) {
+    console.error('Error getting consolidated daily data:', error);
+    return null;
+  }
+});
+
 ipcMain.handle('get-app-category-data', async (event, period) => {
   try {
     if (databaseManager) {

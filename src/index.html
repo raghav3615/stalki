@@ -309,6 +309,57 @@
         </div>
     </div>
 
+    <script>
+        // Fallback if CDN fails
+        if (typeof Chart === 'undefined') {
+            console.error('Chart.js CDN failed, trying alternative...');
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js';
+            document.head.appendChild(script);
+        }
+        
+        // Test Chart.js when page loads
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (typeof Chart !== 'undefined') {
+                    console.log('✅ Chart.js loaded successfully:', Chart.version);
+                    
+                    // Test chart creation
+                    const testCanvas = document.createElement('canvas');
+                    testCanvas.id = 'testChart';
+                    testCanvas.width = 100;
+                    testCanvas.height = 100;
+                    document.body.appendChild(testCanvas);
+                    
+                    try {
+                        const testCtx = testCanvas.getContext('2d');
+                        const testChart = new Chart(testCtx, {
+                            type: 'bar',
+                            data: {
+                                labels: ['Test'],
+                                datasets: [{
+                                    label: 'Test',
+                                    data: [50],
+                                    backgroundColor: '#007aff'
+                                }]
+                            }
+                        });
+                        console.log('✅ Test chart created successfully:', testChart);
+                        
+                        // Remove test chart
+                        setTimeout(() => {
+                            document.body.removeChild(testCanvas);
+                        }, 1000);
+                        
+                    } catch (error) {
+                        console.error('❌ Test chart creation failed:', error);
+                    }
+                } else {
+                    console.error('❌ Chart.js still not available after fallback');
+                }
+            }, 1000);
+        });
+    </script>
     <script src="renderer.js"></script>
 </body>
 </html>

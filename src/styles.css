@@ -259,6 +259,15 @@ body {
     height: 300px;
     position: relative;
     margin-bottom: 1.5rem;
+    border: 2px solid #e5e5e7;
+    border-radius: 8px;
+    background: #fafafa;
+    padding: 1rem;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .chart-legend {
