@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Time</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="user-profile" id="userProfile">
+                    <div class="profile-picture" id="profilePicture">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="profile-info">
+                        <h3 id="userName">Michael</h3>
+                        <p id="userEmail">Click to edit profile</p>
+                    </div>
+                    <button class="edit-profile-btn" id="editProfileBtn">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul class="nav-list">
+                    <li class="nav-item active" data-view="app-usage">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>App Usage</span>
+                    </li>
+                    <li class="nav-item" data-view="notifications">
+                        <i class="fas fa-bell"></i>
+                        <span>Notifications</span>
+                    </li>
+                    <li class="nav-item" data-view="pickups">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Pickups</span>
+                    </li>
+                    <li class="nav-item" data-view="downtime">
+                        <i class="fas fa-moon"></i>
+                        <span>Downtime</span>
+                    </li>
+                    <li class="nav-item" data-view="app-limits">
+                        <i class="fas fa-hourglass-half"></i>
+                        <span>App Limits</span>
+                    </li>
+                    <li class="nav-item" data-view="always-allowed">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Always Allowed</span>
+                    </li>
+                    <li class="nav-item" data-view="content-privacy">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Content & Privacy</span>
+                    </li>
+                    <li class="nav-item" data-view="options">
+                        <i class="fas fa-ellipsis-h"></i>
+                        <span>Options</span>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Header with Period Selector -->
+            <header class="content-header">
+                <div class="period-selector">
+                    <button class="period-nav prev" id="prevPeriod">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="period-display">
+                        <span id="currentPeriod">Last Week</span>
+                    </div>
+                    <button class="period-nav next" id="nextPeriod">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    <button class="period-btn today" id="todayBtn">Today</button>
+                </div>
+            </header>
+
+            <!-- Content Views -->
+            <div class="content-views">
+                <!-- App Usage View (Default) -->
+                <div class="view-content active" id="app-usage-view">
+                    <!-- Daily Usage Summary -->
+                    <div class="daily-usage-summary">
+                        <div class="summary-main">
+                            <span class="summary-time" id="summaryTime">2h 52m</span>
+                            <span class="summary-label">per day</span>
+                        </div>
+                        <div class="summary-subtitle" id="summarySubtitle">23m below average</div>
+                    </div>
+
+                    <!-- Weekly Chart -->
+                    <div class="chart-section">
+                        <div class="chart-container">
+                            <canvas id="weeklyChart"></canvas>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <span class="legend-color productivity"></span>
+                                <span class="legend-label">Productivity</span>
+                                <span class="legend-time" id="productivityTime">1h 22m</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color social"></span>
+                                <span class="legend-label">Social Networking</span>
+                                <span class="legend-time" id="socialTime">1h 5m</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color entertainment"></span>
+                                <span class="legend-label">Entertainment</span>
+                                <span class="legend-time" id="entertainmentTime">25m</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- App List Section -->
+                    <div class="app-list-section">
+                        <div class="list-header">
+                            <div class="view-toggle">
+                                <span>Show:</span>
+                                <select id="viewToggle" class="view-select">
+                                    <option value="app">App</option>
+                                    <option value="category">App Category</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="app-list" id="appList">
+                            <div class="app-item all-apps">
+                                <div class="app-info">
+                                    <div class="app-icon all">
+                                        <i class="fas fa-th-large"></i>
+                                    </div>
+                                    <div class="app-details">
+                                        <div class="app-name">All Apps</div>
+                                        <div class="app-category">Total Usage</div>
+                                    </div>
+                                </div>
+                                <div class="app-time" id="allAppsTime">9h 17m</div>
+                                <div class="app-limits"></div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-info">
+                                    <div class="app-icon safari">
+                                        <i class="fab fa-safari"></i>
+                                    </div>
+                                    <div class="app-details">
+                                        <div class="app-name">Safari</div>
+                                        <div class="app-category">Web Browsing</div>
+                                    </div>
+                                </div>
+                                <div class="app-time">2h 5m</div>
+                                <div class="app-limits"></div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-info">
+                                    <div class="app-icon messages">
+                                        <i class="fas fa-comment"></i>
+                                    </div>
+                                    <div class="app-details">
+                                        <div class="app-name">Messages</div>
+                                        <div class="app-category">Social Networking</div>
+                                    </div>
+                                </div>
+                                <div class="app-time">1h 44m</div>
+                                <div class="app-limits">
+                                    <i class="fas fa-hourglass-half limit-icon"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-info">
+                                    <div class="app-icon slack">
+                                        <i class="fab fa-slack"></i>
+                                    </div>
+                                    <div class="app-details">
+                                        <div class="app-name">Slack</div>
+                                        <div class="app-category">Social Networking</div>
+                                    </div>
+                                </div>
+                                <div class="app-time">43m</div>
+                                <div class="app-limits">
+                                    <i class="fas fa-hourglass-half limit-icon"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-info">
+                                    <div class="app-icon mail">
+                                        <i class="fas fa-envelope"></i>
+                                    </div>
+                                    <div class="app-details">
+                                        <div class="app-name">Mail</div>
+                                        <div class="app-category">Productivity</div>
+                                    </div>
+                                </div>
+                                <div class="app-time">37m</div>
+                                <div class="app-limits"></div>
+                            </div>
+                            
+                            <div class="app-item">
+                                <div class="app-info">
+                                    <div class="app-icon xcode">
+                                        <i class="fas fa-code"></i>
+                                    </div>
+                                    <div class="app-details">
+                                        <div class="app-name">Xcode</div>
+                                        <div class="app-category">Productivity</div>
+                                    </div>
+                                </div>
+                                <div class="app-time">30m</div>
+                                <div class="app-limits"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other Views -->
+                <div class="view-content" id="notifications-view">
+                    <h2>Notifications</h2>
+                    <p>Notification settings and history will be displayed here.</p>
+                </div>
+
+                <div class="view-content" id="pickups-view">
+                    <h2>Pickups</h2>
+                    <p>Device pickup frequency and patterns will be displayed here.</p>
+                </div>
+
+                <div class="view-content" id="downtime-view">
+                    <h2>Downtime</h2>
+                    <p>Downtime settings and schedules will be displayed here.</p>
+                </div>
+
+                <div class="view-content" id="app-limits-view">
+                    <h2>App Limits</h2>
+                    <p>App usage limits and restrictions will be displayed here.</p>
+                </div>
+
+                <div class="view-content" id="always-allowed-view">
+                    <h2>Always Allowed</h2>
+                    <p>Apps that are always allowed will be displayed here.</p>
+                </div>
+
+                <div class="view-content" id="content-privacy-view">
+                    <h2>Content & Privacy</h2>
+                    <p>Content restrictions and privacy settings will be displayed here.</p>
+                </div>
+
+                <div class="view-content" id="options-view">
+                    <h2>Options</h2>
+                    <p>General app settings and preferences will be displayed here.</p>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="content-footer">
+                <div class="footer-left">
+                    <select class="device-selector" id="deviceSelector">
+                        <option value="all">All Devices</option>
+                        <option value="this-device">This Device</option>
+                    </select>
+                </div>
+                <div class="footer-right">
+                    <span id="lastUpdated">Updated today at 9:41 AM</span>
+                </div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div class="modal" id="profileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Edit Profile</h2>
+                <button class="modal-close" id="closeProfile">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-edit-form">
+                    <div class="form-group">
+                        <label for="editUserName">Name:</label>
+                        <input type="text" id="editUserName" placeholder="Enter your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="editUserEmail">Email:</label>
+                        <input type="email" id="editUserEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="profileImageInput">Profile Photo:</label>
+                        <input type="file" id="profileImageInput" accept="image/*">
+                        <div class="image-preview" id="imagePreview">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelProfile">Cancel</button>
+                <button class="btn btn-primary" id="saveProfile">Save Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
